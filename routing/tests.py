@@ -1,6 +1,7 @@
 from datetime import datetime, timezone
 
 import pytest
+from django.test import Client
 
 from routing.services import RiskLevel, Route, Weather, build_route, classify_weather, recommend_route
 
@@ -47,3 +48,24 @@ def test_build_route_uses_eta_for_weather_sampling():
     )
     assert route.checkpoints[-1].eta == datetime(2026, 1, 1, 2, tzinfo=timezone.utc)
     assert seen == [point.eta for point in route.checkpoints]
+
+
+def test_health_endpoint():
+    response = Client().get("/api/health/")
+    assert response.status_code == 200
+    assert response.json() == {"status": "ok"}
+
+
+def test_route_plan_rejects_invalid_load():
+    response = Client().post(
+        "/api/route-plan/",
+        data={
+            "origin": "New York, NY",
+            "destination": "Washington, DC",
+            "departure": "2026-10-19T08:00:00+00:00",
+            "load_weight_lb": -1,
+        },
+        content_type="application/json",
+    )
+    assert response.status_code == 400
+    assert "non-negative" in response.json()["error"]
