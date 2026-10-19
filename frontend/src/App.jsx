@@ -2,6 +2,7 @@ import { useState } from "react";
 import { CircleMarker, MapContainer, Polyline, TileLayer, Tooltip, useMap } from "react-leaflet";
 
 const colors = ["#ef6351", "#24a19c", "#f3b562"];
+const API_URL = (import.meta.env.VITE_API_URL || "").replace(/\/$/, "");
 
 function FitRoutes({ routes }) {
   const map = useMap();
@@ -53,7 +54,7 @@ function App() {
     setLoading(true);
     setError("");
     try {
-      const response = await fetch("/api/route-plan/", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...form, load_weight_lb: Number(form.load_weight_lb) }) });
+      const response = await fetch(`${API_URL}/api/route-plan/`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...form, load_weight_lb: Number(form.load_weight_lb) }) });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Unable to calculate routes");
       setRoutes(data.routes);
