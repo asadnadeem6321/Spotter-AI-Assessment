@@ -40,11 +40,21 @@ class Route:
 
     @property
     def severe_miles(self) -> float:
-        return sum(25 if point.risk >= RiskLevel.SEVERE else 0 for point in self.checkpoints)
+        return self._miles_at_or_above(RiskLevel.SEVERE)
 
     @property
     def high_miles(self) -> float:
-        return sum(25 if point.risk == RiskLevel.HIGH else 0 for point in self.checkpoints)
+        return self._miles_at_or_above(RiskLevel.HIGH) - self.severe_miles
+
+    def _miles_at_or_above(self, risk_level: RiskLevel) -> float:
+        previous_miles = 0.0
+        total = 0.0
+        for point in self.checkpoints:
+            segment_miles = point.miles - previous_miles
+            if point.risk >= risk_level:
+                total += segment_miles
+            previous_miles = point.miles
+        return total
 
     @property
     def average_risk(self) -> float:

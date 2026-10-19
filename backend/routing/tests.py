@@ -36,6 +36,17 @@ def test_recommendation_uses_required_priority_order():
     assert recommend_route(routes).route_id == "fast"
 
 
+def test_risk_miles_use_actual_checkpoint_segments():
+    checkpoints = [
+        type("Point", (), {"miles": 10, "risk": RiskLevel.HIGH})(),
+        type("Point", (), {"miles": 25, "risk": RiskLevel.SEVERE})(),
+        type("Point", (), {"miles": 60, "risk": RiskLevel.LOW})(),
+    ]
+    route = Route("route-1", "test", 60, 60, [], checkpoints)
+    assert route.severe_miles == 15
+    assert route.high_miles == 10
+
+
 def test_build_route_uses_eta_for_weather_sampling():
     seen = []
 
