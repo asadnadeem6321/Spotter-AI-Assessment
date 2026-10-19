@@ -60,6 +60,15 @@ def _serialize_route(route):
                     "snow_in_hr": point.weather.snow_in_hr,
                 },
                 "risk": RiskLevel(point.risk).name.lower().replace("_", " "),
+                "forecast": [
+                    {
+                        "wind_mph": weather.wind_mph,
+                        "rain_in_hr": weather.rain_in_hr,
+                        "snow_in_hr": weather.snow_in_hr,
+                        "risk": RiskLevel(risk).name.lower().replace("_", " "),
+                    }
+                    for weather, risk in point.forecast
+                ],
             }
             for point in route.checkpoints
         ],

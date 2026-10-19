@@ -60,7 +60,7 @@ def route_options(origin, destination):
 
 def _weather_batch(points):
     start = min(eta for _, _, eta in points)
-    end = max(eta for _, _, eta in points)
+    end = max(eta for _, _, eta in points) + timedelta(hours=48)
     data = _get_json(
         "https://api.open-meteo.com/v1/forecast",
         {
@@ -81,11 +81,16 @@ def _weather_batch(points):
         eta = point[2]
         index = min(range(len(times)), key=lambda item: abs(times[item] - eta))
         hourly = response["hourly"]
-        weather_by_point[point] = Weather(
-            wind_mph=hourly["wind_speed_10m"][index],
-            rain_in_hr=hourly["rain"][index],
-            snow_in_hr=hourly["snowfall"][index],
-        )
+        forecast = []
+        for hour in range(49):
+            forecast_time = point[2] + timedelta(hours=hour)
+            forecast_index = min(range(len(times)), key=lambda item: abs(times[item] - forecast_time))
+            forecast.append(Weather(
+                wind_mph=hourly["wind_speed_10m"][forecast_index],
+                rain_in_hr=hourly["rain"][forecast_index],
+                snow_in_hr=hourly["snowfall"][forecast_index],
+            ))
+        weather_by_point[point] = forecast
     return weather_by_point
 
 
@@ -103,6 +108,9 @@ def build_provider_routes(origin, destination, departure, load_weight):
         weather_by_point = _weather_batch(points)
 
         def weather_for(latitude, longitude, eta):
+            return weather_by_point[(latitude, longitude, eta)][0]
+
+        def forecast_for(latitude, longitude, eta):
             return weather_by_point[(latitude, longitude, eta)]
 
         routes.append(
@@ -115,6 +123,7 @@ def build_provider_routes(origin, destination, departure, load_weight):
                 departure,
                 load_weight,
                 weather_for,
+                forecast_for,
             )
         )
     return routes

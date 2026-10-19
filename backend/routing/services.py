@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from enum import IntEnum
 from math import ceil
@@ -27,6 +27,7 @@ class Checkpoint:
     eta: datetime
     weather: Weather
     risk: RiskLevel
+    forecast: list[tuple[Weather, RiskLevel]] = field(default_factory=list)
 
 
 @dataclass(frozen=True)
@@ -117,6 +118,7 @@ def build_route(
     departure: datetime,
     load_weight_lb: float,
     weather_for: callable,
+    forecast_for: callable | None = None,
 ) -> Route:
     checkpoints = []
     for miles in checkpoint_distances(distance_miles):
@@ -124,8 +126,7 @@ def build_route(
         latitude, longitude = coordinates[min(int(fraction * (len(coordinates) - 1)), len(coordinates) - 1)]
         eta = departure + timedelta(minutes=duration_minutes * fraction)
         weather = weather_for(latitude, longitude, eta)
-        checkpoints.append(
-            Checkpoint(
+        checkpoint = Checkpoint(
                 miles=miles,
                 latitude=latitude,
                 longitude=longitude,
@@ -133,5 +134,10 @@ def build_route(
                 weather=weather,
                 risk=classify_weather(weather, load_weight_lb),
             )
-        )
+        if forecast_for:
+            checkpoint.forecast.extend(
+                (forecast, classify_weather(forecast, load_weight_lb))
+                for forecast in forecast_for(latitude, longitude, eta)
+            )
+        checkpoints.append(checkpoint)
     return Route(route_id, summary, distance_miles, duration_minutes, coordinates, checkpoints)

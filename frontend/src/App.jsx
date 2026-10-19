@@ -27,8 +27,8 @@ function RouteMap({ routes, selectedId, forecastHour }) {
         <span key={route.id}>
           <Polyline positions={route.coordinates} pathOptions={{ color: colors[index], weight: route.id === selectedId ? 6 : 3, opacity: route.id === selectedId ? 1 : 0.48 }} />
           {route.checkpoints.map((point) => (
-            <CircleMarker key={`${route.id}-${point.miles}`} center={[point.latitude, point.longitude]} radius={selected?.id === route.id ? 7 : 5} pathOptions={{ color: riskColor(point.risk), fillColor: riskColor(point.risk), fillOpacity: 0.85 }}>
-              <Tooltip>{`${point.miles.toFixed(0)} mi · ${point.risk} · ${forecastHour}h view`}</Tooltip>
+            <CircleMarker key={`${route.id}-${point.miles}`} center={[point.latitude, point.longitude]} radius={selected?.id === route.id ? 7 : 5} pathOptions={{ color: riskColor(point.forecast?.[forecastHour]?.risk || point.risk), fillColor: riskColor(point.forecast?.[forecastHour]?.risk || point.risk), fillOpacity: 0.85 }}>
+              <Tooltip>{`${point.miles.toFixed(0)} mi · ${point.forecast?.[forecastHour]?.risk || point.risk} · +${forecastHour}h`}</Tooltip>
             </CircleMarker>
           ))}
         </span>
