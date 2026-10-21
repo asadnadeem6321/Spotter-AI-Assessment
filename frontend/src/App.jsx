@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CircleMarker, MapContainer, Polyline, TileLayer, Tooltip, useMap } from "react-leaflet";
 
 const colors = ["#ef6351", "#24a19c", "#f3b562"];
@@ -44,6 +44,22 @@ function App() {
   const [forecastHour, setForecastHour] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [backendStatus, setBackendStatus] = useState("checking");
+
+  useEffect(() => {
+    let active = true;
+    fetch(`${API_URL}/api/health/`)
+      .then((response) => {
+        if (!response.ok) throw new Error("Backend health check failed");
+        if (active) setBackendStatus("connected");
+      })
+      .catch(() => {
+        if (active) setBackendStatus("unavailable");
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
 
   function updateField(event) {
     setForm((current) => ({ ...current, [event.target.name]: event.target.value }));
@@ -70,7 +86,7 @@ function App() {
     <main className="shell">
       <header className="masthead">
         <div><p className="eyebrow">SPOTTER / ROUTE DESK</p><h1>Weather-aware routing for the long haul.</h1><p className="lede">Compare route risk at the moment your truck reaches each checkpoint.</p></div>
-        <div className="status-dot"><span /> Live planning</div>
+        <div className={`status-dot ${backendStatus}`}><span /> {backendStatus === "checking" ? "Connecting to API" : backendStatus === "connected" ? "Backend connected" : "Backend unavailable"}</div>
       </header>
       <section className="workspace">
         <aside className="control-panel">

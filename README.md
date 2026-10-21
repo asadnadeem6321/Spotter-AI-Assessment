@@ -29,3 +29,7 @@ Weather-Aware Truck Routing helps a driver compare three route options using dep
 - `POST /api/route-plan/` accepts `origin`, `destination`, `departure` (ISO 8601), and `load_weight_lb`, and returns three routes, checkpoints, ETAs, weather, forecast risk, and the recommended route ID.
 
 The backend logic is covered by automated tests for threshold boundaries, load overrides, ETA sampling, route ranking, risk mileage, input validation, and health checks.
+
+## Connecting the Vercel Apps
+
+Deploy `backend/` as one Vercel project and `frontend/` as a second Vercel project. In the frontend project, set `VITE_API_URL` to the deployed backend URL, for example `https://weather-routing-api.vercel.app`. In the backend project, set `CORS_ALLOWED_ORIGINS` to the deployed frontend URL, for example `https://weather-routing.vercel.app`. Redeploy both projects after changing these values. The frontend header reports `Backend connected` when the health check succeeds.
