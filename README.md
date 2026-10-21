@@ -30,6 +30,7 @@ Weather-Aware Truck Routing helps a driver compare three route options using dep
 
 The backend logic is covered by automated tests for threshold boundaries, load overrides, ETA sampling, route ranking, risk mileage, input validation, and health checks.
 
-## Connecting the Vercel Apps
+## Deployed Connection
 
-Deploy `backend/` as one Vercel project and `frontend/` as a second Vercel project. In the frontend project, set `VITE_API_URL` to the deployed backend URL, for example `https://weather-routing-api.vercel.app`. In the backend project, set `CORS_ALLOWED_ORIGINS` to the deployed frontend URL, for example `https://weather-routing.vercel.app`. Redeploy both projects after changing these values. The frontend header reports `Backend connected` when the health check succeeds.
+The frontend deployment is `https://spotter-ai-assessment-7uy3.vercel.app` and the backend deployment is `https://spotter-ai-assessment-cznj.vercel.app`. The frontend checks `GET /api/health/` and displays the backend connection status. Configure `CORS_ALLOWED_ORIGINS` on the backend with the frontend URL, then redeploy the backend project with `backend/` as its Vercel root.
+

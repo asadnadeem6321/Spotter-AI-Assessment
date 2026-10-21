@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { CircleMarker, MapContainer, Polyline, TileLayer, Tooltip, useMap } from "react-leaflet";
 
 const colors = ["#ef6351", "#24a19c", "#f3b562"];
-const API_URL = (import.meta.env.VITE_API_URL || "").replace(/\/$/, "");
+const API_URL = (import.meta.env.VITE_API_URL || "https://spotter-ai-assessment-cznj.vercel.app").replace(/\/$/, "");
 
 function FitRoutes({ routes }) {
   const map = useMap();
