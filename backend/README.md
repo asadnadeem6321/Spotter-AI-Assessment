@@ -11,6 +11,6 @@ pip install -r requirements.txt
 python manage.py runserver
 ```
 
-## Railway
+## Vercel
 
-Set the variables in `.env.example`, deploy this directory as the Railway root, and Railway will use the included `Procfile`.
+Set the variables in `.env.example`, configure `backend/` as the Vercel project root, and deploy with the included `vercel.json` and `api/index.py` entry point.
