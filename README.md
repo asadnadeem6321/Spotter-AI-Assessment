@@ -32,5 +32,5 @@ The backend logic is covered by automated tests for threshold boundaries, load o
 
 ## Deployed Connection
 
-The frontend deployment is `https://spotter-ai-assessment-7uy3.vercel.app` and the backend deployment is `https://spotter-ai-assessment-cznj.vercel.app`. The frontend checks `GET /api/health/` and displays the backend connection status. Configure `CORS_ALLOWED_ORIGINS` on the backend with the frontend URL, then redeploy the backend project with `backend/` as its Vercel root.
+The frontend deployment is `https://spotter-ai-assessment-7uy3.vercel.app` and the backend deployment is `https://spotter-ai-assessment-cznj.vercel.app`. The frontend checks `GET /api/health/` and displays the backend connection status. For the backend Vercel project, use either the repository root or `backend/` as the project root; both include a Vercel Python entry point. Configure `CORS_ALLOWED_ORIGINS` on the backend with the frontend URL, then redeploy.
 
